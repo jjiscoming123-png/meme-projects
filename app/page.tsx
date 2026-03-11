@@ -2,89 +2,136 @@
 
 import { useEffect, useRef, useState } from "react"
 
-function useInView(ref: React.RefObject<HTMLElement | null>) {
-  const [isInView, setIsInView] = useState(false)
-  useEffect(() => {
-    if (!ref.current) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsInView(true) },
-      { threshold: 0.1 }
-    )
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [ref])
-  return isInView
-}
+/* ──────────────────────── Hooks ──────────────────────── */
 
-function Section({ children, className = "", id }: { children: React.ReactNode; className?: string; id?: string }) {
+function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
-  const isInView = useInView(ref)
-  return (
-    <section
-      ref={ref}
-      id={id}
-      className={`py-24 px-6 transition-all duration-1000 ${isInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"} ${className}`}
-    >
-      {children}
-    </section>
-  )
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+  return { ref, visible }
 }
 
-function Navbar() {
+/* ──────────────────────── Nav ──────────────────────── */
+
+function Nav() {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
+    const fn = () => setScrolled(window.scrollY > 60)
+    window.addEventListener("scroll", fn, { passive: true })
+    return () => window.removeEventListener("scroll", fn)
   }, [])
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass py-3" : "py-6"}`}>
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-6">
-        <span className="text-xl font-bold gradient-text">NGMI</span>
-        <div className="hidden md:flex gap-8 text-sm text-[var(--color-muted)]">
-          <a href="#mission" className="hover:text-white transition">Mission</a>
-          <a href="#community" className="hover:text-white transition">Community</a>
-          <a href="#roadmap" className="hover:text-white transition">Roadmap</a>
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[var(--color-background)]/80 backdrop-blur-xl border-b border-white/[0.04] py-4" : "py-7"}`}>
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between px-6 lg:px-8">
+        <a href="#" className="text-lg font-black tracking-tight">
+          NGMI<span className="text-[var(--color-accent)]">.</span>
+        </a>
+        <div className="hidden md:flex items-center gap-10 text-[13px] text-[var(--color-muted)] font-medium">
+          <a href="#story" className="hover:text-white transition-colors duration-300">Story</a>
+          <a href="#principles" className="hover:text-white transition-colors duration-300">Principles</a>
+          <a href="#vision" className="hover:text-white transition-colors duration-300">Vision</a>
         </div>
-        <a href="#join" className="text-sm px-5 py-2 rounded-full bg-[var(--color-primary)] text-black font-semibold hover:bg-[var(--color-primary-dark)] transition">
-          Join Us
+        <a
+          href="https://t.me/NGMIToken"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[13px] font-semibold text-[var(--color-background)] bg-[var(--color-accent)] px-5 py-2 rounded-full hover:bg-[var(--color-accent-dim)] transition-colors duration-300"
+        >
+          Join
         </a>
       </div>
     </nav>
   )
 }
 
+/* ──────────────────────── Hero ──────────────────────── */
+
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: 'linear-gradient(rgba(56,189,248,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.3) 1px, transparent 1px)',
-        backgroundSize: '60px 60px'
-      }} />
-      {/* Glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-primary)] rounded-full blur-[180px] opacity-10 animate-pulse-glow" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-indigo-500 rounded-full blur-[160px] opacity-10 animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
-      
-      <div className="relative text-center max-w-4xl mx-auto px-6">
-        <div className="animate-fade-in-up">
-          <p className="text-[var(--color-primary)] text-sm font-semibold tracking-[0.3em] uppercase mb-6">The Movement Has Begun</p>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] mb-6">
-            They Said We{" "}
-            <span className="gradient-text">Won&apos;t Make It.</span>
-          </h1>
-          <p className="text-2xl md:text-3xl font-medium text-white/80 mb-4">They were wrong.</p>
-          <p className="text-lg text-[var(--color-muted)] max-w-2xl mx-auto mb-10">
-            NGMI is a global community of builders, dreamers, and fighters who refuse to be defined by doubt. 
-            We&apos;re here to prove that resilience beats everything.
+    <section className="relative min-h-[100svh] flex flex-col justify-end pb-16 md:pb-24 overflow-hidden">
+      {/* Ambient light */}
+      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-[var(--color-accent)] blur-[250px] animate-breathe pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-15%] w-[500px] h-[500px] rounded-full bg-indigo-600 blur-[200px] opacity-[0.06] pointer-events-none" />
+
+      <div className="relative max-w-[1200px] mx-auto px-6 lg:px-8 w-full">
+        <div className="label animate-fade-up delay-1 mb-6">Est. 2026</div>
+        <h1 className="display-xl animate-fade-up delay-2 mb-8">
+          THEY SAID<br />
+          WE WON&apos;T<br />
+          <span className="text-[var(--color-accent)]">MAKE IT.</span>
+        </h1>
+        <div className="max-w-lg animate-fade-up delay-3">
+          <p className="body-lg">
+            Every generation has its doubters. Every doubter creates
+            a rebel. We&apos;re the rebels.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#join" className="px-8 py-4 rounded-full bg-[var(--color-primary)] text-black font-bold text-lg hover:bg-[var(--color-primary-dark)] transition-all hover:scale-105">
-              Join The Movement →
-            </a>
-            <a href="#mission" className="px-8 py-4 rounded-full border border-white/20 text-white font-medium text-lg hover:bg-white/5 transition-all">
-              Learn More
-            </a>
+        </div>
+        <div className="mt-10 animate-fade-up delay-4 flex items-center gap-6">
+          <a
+            href="#story"
+            className="text-sm font-semibold text-[var(--color-background)] bg-[var(--color-accent)] px-7 py-3.5 rounded-full hover:bg-[var(--color-accent-dim)] transition-colors duration-300"
+          >
+            Read the Manifesto
+          </a>
+          <a href="#principles" className="text-sm text-[var(--color-muted)] hover:text-white transition-colors duration-300">
+            Our Principles →
+          </a>
+        </div>
+      </div>
+
+      {/* Scroll hint */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-fade-in delay-5">
+        <div className="w-px h-8 bg-gradient-to-b from-transparent to-[var(--color-muted)]" />
+      </div>
+    </section>
+  )
+}
+
+/* ──────────────────────── Story ──────────────────────── */
+
+function Story() {
+  const { ref, visible } = useInView()
+
+  return (
+    <section id="story" ref={ref} className="py-32 md:py-40">
+      <div className="section-divider mb-32 md:mb-40" />
+      <div className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+        <div className="grid md:grid-cols-12 gap-12 md:gap-6">
+          {/* Left: label + title */}
+          <div className="md:col-span-5">
+            <div className="label mb-4">The Story</div>
+            <h2 className="display-lg">
+              Born from<br />
+              <span className="text-[var(--color-accent)]">the ashes.</span>
+            </h2>
+          </div>
+          {/* Right: narrative */}
+          <div className="md:col-span-6 md:col-start-7 flex flex-col gap-8">
+            <p className="body-lg">
+              NGMI didn&apos;t start in a boardroom or a pitch deck. It started in a comment section —
+              where someone typed three letters to tell a stranger their dream was dead.
+            </p>
+            <p className="body-lg">
+              We took that insult and made it a battle cry. Because the people who get
+              told &ldquo;you won&apos;t make it&rdquo; are usually the ones building something
+              nobody else has the guts to try.
+            </p>
+            <p className="body-lg">
+              This isn&apos;t a project with a whitepaper and a promise. It&apos;s a collective
+              of people who decided that conviction matters more than consensus,
+              and that showing up matters more than being right.
+            </p>
+            <div className="accent-line mt-4" />
           </div>
         </div>
       </div>
@@ -92,191 +139,194 @@ function Hero() {
   )
 }
 
-function Mission() {
-  const values = [
-    { icon: "🛡️", title: "Resilience", desc: "Markets crash, doubters laugh, but we keep building. Every setback is a setup for a comeback." },
-    { icon: "🤝", title: "Community", desc: "50,000+ members across 120 countries. We lift each other up and move forward together." },
-    { icon: "🔍", title: "Transparency", desc: "No hidden agendas. Everything we do is open, honest, and driven by community consensus." },
-    { icon: "⚡", title: "Action", desc: "We don't just talk. We build, we ship, we execute. Results speak louder than promises." },
+/* ──────────────────────── Principles ──────────────────────── */
+
+function Principles() {
+  const { ref, visible } = useInView()
+
+  const items = [
+    {
+      num: "01",
+      title: "Conviction Over Consensus",
+      text: "The crowd is usually wrong. We follow conviction, not trends. When everyone says sell, we ask why. When everyone says buy, we ask what for.",
+    },
+    {
+      num: "02",
+      title: "Build in Public",
+      text: "No hidden roadmaps. No secret plans. Everything we do is visible, verifiable, and open to challenge. Trust is earned through transparency, not promises.",
+    },
+    {
+      num: "03",
+      title: "Community Is the Product",
+      text: "We don't have users — we have members. The strength of NGMI is the network of people who refuse to quit. That's not a feature. That's the whole point.",
+    },
+    {
+      num: "04",
+      title: "Resilience as Identity",
+      text: "Markets cycle. Narratives shift. We stay. Not because we're stubborn, but because we've seen what happens when you outlast the noise.",
+    },
   ]
 
   return (
-    <Section id="mission">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-[var(--color-primary)] text-sm font-semibold tracking-[0.2em] uppercase mb-4">Our Mission</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">What is NGMI?</h2>
-          <p className="text-lg text-[var(--color-muted)] max-w-3xl mx-auto">
-            Born from the crypto community, NGMI represents every person who&apos;s been told they can&apos;t succeed — 
-            and chose to prove them wrong. We&apos;re not just a community. We&apos;re a movement.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((v, i) => (
-            <div key={i} className="glass rounded-2xl p-8 hover:border-[var(--color-primary)]/30 transition-all hover:-translate-y-1 duration-300">
-              <div className="text-4xl mb-4">{v.icon}</div>
-              <h3 className="text-xl font-bold mb-3">{v.title}</h3>
-              <p className="text-[var(--color-muted)] text-sm leading-relaxed">{v.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  )
-}
+    <section id="principles" ref={ref} className="py-32 md:py-40 bg-[var(--color-surface)]">
+      <div className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+        <div className="label mb-4">Principles</div>
+        <h2 className="display-lg mb-20 md:mb-28">
+          What we<br />
+          <span className="text-[var(--color-accent)]">stand for.</span>
+        </h2>
 
-function Community() {
-  const stats = [
-    { number: "50K+", label: "Community Members" },
-    { number: "120+", label: "Countries" },
-    { number: "24/7", label: "Active Global Community" },
-    { number: "100%", label: "Community Driven" },
-  ]
-
-  const testimonials = [
-    { quote: "NGMI changed my perspective. It's not about the market — it's about the people you build with.", name: "Alex R.", role: "Early Member" },
-    { quote: "I joined when everyone said crypto was dead. This community showed me that conviction beats timing.", name: "Sarah K.", role: "Community Lead" },
-    { quote: "The strongest communities are born in the hardest times. NGMI is proof of that.", name: "David M.", role: "Builder" },
-  ]
-
-  return (
-    <Section id="community" className="bg-[var(--color-surface)]/50">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-[var(--color-primary)] text-sm font-semibold tracking-[0.2em] uppercase mb-4">Our Community</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Strength in Numbers</h2>
-          <p className="text-lg text-[var(--color-muted)] max-w-2xl mx-auto">
-            Our community is our greatest asset. Together, we&apos;re building something that lasts.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {stats.map((s, i) => (
-            <div key={i} className="text-center p-6">
-              <div className="text-4xl md:text-5xl font-black gradient-text mb-2">{s.number}</div>
-              <div className="text-sm text-[var(--color-muted)]">{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((t, i) => (
-            <div key={i} className="glass rounded-2xl p-8">
-              <p className="text-white/80 mb-6 leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
-              <div>
-                <p className="font-semibold text-white">{t.name}</p>
-                <p className="text-sm text-[var(--color-primary)]">{t.role}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  )
-}
-
-function Roadmap() {
-  const phases = [
-    { phase: "Phase 1", title: "Community Building", status: "Completed", items: ["Launch core community channels", "Establish governance framework", "Reach 10,000 founding members", "Build brand identity"] },
-    { phase: "Phase 2", title: "Platform Development", status: "In Progress", items: ["Develop community platform", "Launch member verification", "Create educational resources", "Strategic partnerships"] },
-    { phase: "Phase 3", title: "Global Expansion", status: "Upcoming", items: ["Multi-language support", "Regional community hubs", "Ambassador program", "Global events & meetups"] },
-    { phase: "Phase 4", title: "Ecosystem Growth", status: "Future", items: ["Ecosystem grants program", "Developer tools & SDK", "Cross-chain integration", "Decentralized governance"] },
-  ]
-
-  return (
-    <Section id="roadmap">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-[var(--color-primary)] text-sm font-semibold tracking-[0.2em] uppercase mb-4">Roadmap</p>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">The Path Forward</h2>
-          <p className="text-lg text-[var(--color-muted)] max-w-2xl mx-auto">
-            We move with purpose. Every phase builds on the last, driven by our community&apos;s needs.
-          </p>
-        </div>
-
-        <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-[var(--color-primary)] via-[var(--color-primary)]/30 to-transparent hidden md:block" />
-          
-          <div className="space-y-12">
-            {phases.map((p, i) => (
-              <div key={i} className="md:pl-20 relative">
-                <div className="absolute left-6 top-2 w-4 h-4 rounded-full border-2 border-[var(--color-primary)] bg-[var(--color-background)] hidden md:block" />
-                <div className="glass rounded-2xl p-8">
-                  <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <span className="text-[var(--color-primary)] font-bold text-sm">{p.phase}</span>
-                    <span className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      p.status === "Completed" ? "bg-emerald-500/20 text-emerald-400" :
-                      p.status === "In Progress" ? "bg-[var(--color-primary)]/20 text-[var(--color-primary)]" :
-                      "bg-white/5 text-white/40"
-                    }`}>{p.status}</span>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4">{p.title}</h3>
-                  <ul className="grid sm:grid-cols-2 gap-2">
-                    {p.items.map((item, j) => (
-                      <li key={j} className="flex items-center gap-2 text-sm text-[var(--color-muted)]">
-                        <span className="text-[var(--color-primary)]">✓</span> {item}
-                      </li>
-                    ))}
-                  </ul>
+        <div className="space-y-0">
+          {items.map((item, i) => (
+            <div key={i} className="group border-t border-white/[0.06] py-10 md:py-14">
+              <div className="grid md:grid-cols-12 gap-4 md:gap-6 items-start">
+                <div className="md:col-span-1 text-[var(--color-accent)] text-sm font-mono font-semibold pt-1">
+                  {item.num}
                 </div>
+                <h3 className="md:col-span-4 display-md group-hover:text-[var(--color-accent)] transition-colors duration-500">
+                  {item.title}
+                </h3>
+                <p className="md:col-span-5 md:col-start-7 body-lg">
+                  {item.text}
+                </p>
               </div>
+            </div>
+          ))}
+          <div className="border-t border-white/[0.06]" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ──────────────────────── Marquee quote ──────────────────────── */
+
+function Marquee() {
+  return (
+    <div className="py-16 md:py-24 overflow-hidden select-none">
+      <div className="flex whitespace-nowrap">
+        {[0, 1].map((k) => (
+          <div key={k} className="flex shrink-0 animate-[marquee_30s_linear_infinite] items-center gap-12 pr-12">
+            {["NOT GONNA MAKE IT?", "WATCH US.", "NOT GONNA MAKE IT?", "WATCH US.", "NOT GONNA MAKE IT?", "WATCH US."].map((t, i) => (
+              <span key={i} className={`text-5xl md:text-7xl font-black tracking-tight ${i % 2 === 0 ? "text-white/[0.04]" : "text-[var(--color-accent)]/20"}`}>
+                {t}
+              </span>
             ))}
           </div>
-        </div>
+        ))}
       </div>
-    </Section>
+      <style>{`
+        @keyframes marquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+      `}</style>
+    </div>
   )
 }
 
-function Join() {
+/* ──────────────────────── Vision ──────────────────────── */
+
+function Vision() {
+  const { ref, visible } = useInView()
+
   return (
-    <Section id="join" className="bg-[var(--color-surface)]/50">
-      <div className="max-w-3xl mx-auto text-center">
-        <p className="text-[var(--color-primary)] text-sm font-semibold tracking-[0.2em] uppercase mb-4">Join Us</p>
-        <h2 className="text-4xl md:text-5xl font-bold mb-6">Be Part of the Movement</h2>
-        <p className="text-lg text-[var(--color-muted)] mb-10">
-          The best time to join was yesterday. The second best time is now.
+    <section id="vision" ref={ref} className="py-32 md:py-40">
+      <div className="section-divider mb-32 md:mb-40" />
+      <div className={`max-w-[1200px] mx-auto px-6 lg:px-8 transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+        <div className="max-w-3xl">
+          <div className="label mb-4">Vision</div>
+          <h2 className="display-lg mb-10">
+            We&apos;re not building a product.<br />
+            We&apos;re building <span className="text-[var(--color-accent)]">proof.</span>
+          </h2>
+          <div className="space-y-8">
+            <p className="body-lg">
+              Proof that communities built on conviction outlast those built on hype.
+              Proof that the ones who were laughed at are the ones who end up
+              changing the game.
+            </p>
+            <p className="body-lg">
+              The next phase isn&apos;t a roadmap — it&apos;s whatever this community
+              decides to build next. We don&apos;t predict the future. We show up
+              for it.
+            </p>
+          </div>
+          <div className="accent-line mt-12" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ──────────────────────── CTA / Join ──────────────────────── */
+
+function Join() {
+  const { ref, visible } = useInView()
+
+  return (
+    <section ref={ref} className="py-32 md:py-40 bg-[var(--color-surface)]">
+      <div className={`max-w-[1200px] mx-auto px-6 lg:px-8 text-center transition-all duration-1000 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+        <h2 className="display-lg mb-6">
+          Still here?<br />
+          <span className="text-[var(--color-accent)]">Good.</span>
+        </h2>
+        <p className="body-lg max-w-lg mx-auto mb-12">
+          The people who scroll this far are the people we want.
+          Pick your channel. Show up. That&apos;s all it takes.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <a href="https://twitter.com/NGMIToken" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl glass hover:border-[var(--color-primary)]/50 transition-all hover:-translate-y-1 duration-300">
-            <span className="text-2xl">𝕏</span>
-            <div className="text-left">
-              <div className="font-semibold text-white">Twitter / X</div>
-              <div className="text-xs text-[var(--color-muted)]">Follow for updates</div>
-            </div>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="https://twitter.com/NGMIToken"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-3 text-sm font-semibold text-[var(--color-background)] bg-[var(--color-accent)] px-8 py-4 rounded-full hover:bg-[var(--color-accent-dim)] transition-colors duration-300"
+          >
+            <span>𝕏</span>
+            <span>Follow on X</span>
           </a>
-          <a href="https://t.me/NGMIToken" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 px-8 py-4 rounded-2xl glass hover:border-[var(--color-primary)]/50 transition-all hover:-translate-y-1 duration-300">
-            <span className="text-2xl">✈️</span>
-            <div className="text-left">
-              <div className="font-semibold text-white">Telegram</div>
-              <div className="text-xs text-[var(--color-muted)]">Join the conversation</div>
-            </div>
+          <a
+            href="https://t.me/NGMIToken"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-3 text-sm font-semibold border border-white/10 px-8 py-4 rounded-full hover:bg-white/[0.04] transition-all duration-300"
+          >
+            <span>Telegram</span>
           </a>
         </div>
       </div>
-    </Section>
+    </section>
   )
 }
+
+/* ──────────────────────── Footer ──────────────────────── */
 
 function Footer() {
   return (
-    <footer className="border-t border-white/5 py-12 px-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="text-lg font-bold gradient-text">NGMI</span>
-        <p className="text-sm text-[var(--color-muted)]">© 2026 NGMI Foundation. All rights reserved.</p>
+    <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-8">
+      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <span className="text-sm font-bold tracking-tight">
+          NGMI<span className="text-[var(--color-accent)]">.</span>
+        </span>
+        <p className="text-xs text-[var(--color-muted)]">
+          © 2026 NGMI. Not financial advice. Not gonna make it? Prove them wrong.
+        </p>
       </div>
     </footer>
   )
 }
 
+/* ──────────────────────── Page ──────────────────────── */
+
 export default function Page() {
   return (
-    <main>
-      <Navbar />
+    <main className="noise">
+      <Nav />
       <Hero />
-      <Mission />
-      <Community />
-      <Roadmap />
+      <Story />
+      <Principles />
+      <Marquee />
+      <Vision />
       <Join />
       <Footer />
     </main>
