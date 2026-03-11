@@ -31,10 +31,11 @@ function Nav() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[var(--color-background)]/80 backdrop-blur-xl border-b border-white/[0.04] py-4" : "py-7"}`}>
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[var(--color-background)]/90 backdrop-blur-xl border-b border-white/[0.04] py-4" : "bg-gradient-to-b from-[var(--color-background)] via-[var(--color-background)]/80 to-transparent py-7"}`}>
       <div className="max-w-[1200px] mx-auto flex items-center justify-between px-6 lg:px-8">
-        <a href="#" className="text-lg font-black tracking-tight">
-          NGMI<span className="text-[var(--color-accent)]">.</span>
+        <a href="#" className="flex items-center gap-1.5 group">
+          <span className="w-6 h-6 rounded-[6px] bg-[var(--color-accent)] flex items-center justify-center text-[11px] font-black text-[var(--color-background)] leading-none group-hover:rounded-[8px] transition-all duration-300">N</span>
+          <span className="text-[13px] font-bold tracking-[0.2em] uppercase text-white/90">GMI</span>
         </a>
         <div className="hidden md:flex items-center gap-10 text-[13px] text-[var(--color-muted)] font-medium">
           <a href="#story" className="hover:text-white transition-colors duration-300">Story</a>
@@ -305,9 +306,10 @@ function Footer() {
   return (
     <footer className="border-t border-white/[0.04] py-10 px-6 lg:px-8">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="text-sm font-bold tracking-tight">
-          NGMI<span className="text-[var(--color-accent)]">.</span>
-        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-5 h-5 rounded-[5px] bg-[var(--color-accent)] flex items-center justify-center text-[9px] font-black text-[var(--color-background)] leading-none">N</span>
+          <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/70">GMI</span>
+        </div>
         <p className="text-xs text-[var(--color-muted)]">
           © 2026 NGMI. Not financial advice. Not gonna make it? Prove them wrong.
         </p>
