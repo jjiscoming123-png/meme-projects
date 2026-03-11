@@ -1,32 +1,9 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, Share_Tech_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const _spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
-const _shareTechMono = Share_Tech_Mono({ subsets: ["latin"], weight: "400" });
-
 export const metadata: Metadata = {
-  title: 'NGMI — Not Gonna Make It',
-  description: 'The most honest meme coin in crypto. We\'re all gonna lose money together.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  title: 'NGMI — Never Give Up, Make It',
+  description: 'A global movement for those who refuse to quit. Join 50,000+ members building the future together.',
 }
 
 export default function RootLayout({
@@ -36,9 +13,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+      </head>
+      <body className="antialiased">
         {children}
-        <Analytics />
       </body>
     </html>
   )
