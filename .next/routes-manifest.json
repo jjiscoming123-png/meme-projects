@@ -45,10 +45,10 @@
       "namedRegex": "^/favicon\\.ico(?:/)?$"
     },
     {
-      "page": "/icon.svg",
-      "regex": "^/icon\\.svg(?:/)?$",
+      "page": "/icon.png",
+      "regex": "^/icon\\.png(?:/)?$",
       "routeKeys": {},
-      "namedRegex": "^/icon\\.svg(?:/)?$"
+      "namedRegex": "^/icon\\.png(?:/)?$"
     }
   ],
   "dataRoutes": [],
