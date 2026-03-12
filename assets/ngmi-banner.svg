@@ -1,0 +1,19 @@
+<svg width="1500" height="500" viewBox="0 0 1500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1500" height="500" fill="#06080d"/>
+  <!-- Subtle glow -->
+  <radialGradient id="glow" cx="30%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#c8ff00" stop-opacity="0.06"/>
+    <stop offset="100%" stop-color="#06080d" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="1500" height="500" fill="url(#glow)"/>
+  <!-- Main text -->
+  <text x="100" y="220" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="120" fill="#ffffff" letter-spacing="-3">THEY SAID WE</text>
+  <text x="100" y="350" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="120" fill="#c8ff00" letter-spacing="-3">WON'T MAKE IT.</text>
+  <!-- Subtle label -->
+  <text x="100" y="420" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="18" fill="#5a6270" letter-spacing="4">THE MOVEMENT HAS BEGUN</text>
+  <!-- Arrow-N logo on right -->
+  <g transform="translate(1200, 120) scale(7)">
+    <path d="M3 38V6H11L25 28V6L29 0L33 6V38H25L11 16V38H3Z" fill="#c8ff00" opacity="0.15"/>
+  </g>
+</svg>

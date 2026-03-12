@@ -45,12 +45,12 @@ function Nav() {
           <a href="#vision" className="hover:text-white transition-colors duration-300">Vision</a>
         </div>
         <a
-          href="https://t.me/NGMIToken"
+          href="https://x.com/NGMI_Official"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[13px] font-semibold text-[var(--color-background)] bg-[var(--color-accent)] px-5 py-2 rounded-full hover:bg-[var(--color-accent-dim)] transition-colors duration-300"
         >
-          Join
+          Follow
         </a>
       </div>
     </nav>
@@ -280,21 +280,13 @@ function Join() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://twitter.com/NGMIToken"
+            href="https://x.com/NGMI_Official"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-3 text-sm font-semibold text-[var(--color-background)] bg-[var(--color-accent)] px-8 py-4 rounded-full hover:bg-[var(--color-accent-dim)] transition-colors duration-300"
           >
             <span>𝕏</span>
             <span>Follow on X</span>
-          </a>
-          <a
-            href="https://t.me/NGMIToken"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-3 text-sm font-semibold border border-white/10 px-8 py-4 rounded-full hover:bg-white/[0.04] transition-all duration-300"
-          >
-            <span>Telegram</span>
           </a>
         </div>
       </div>
