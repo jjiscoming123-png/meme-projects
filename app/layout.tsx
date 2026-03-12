@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'NGMI — Never Give Up, Make It',
-  description: 'A global movement for those who refuse to quit. Join 50,000+ members building the future together.',
+  title: 'NGMI',
+  description: 'They said we won\'t make it. We took that personally.',
 }
 
 export default function RootLayout({
